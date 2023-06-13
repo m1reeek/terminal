@@ -1,0 +1,24 @@
+from time import sleep
+
+ascii_art = '''
+     /` _____ `\\;,
+    /__(^===^)__\\';,
+      /  :::  \\   ,;
+     |   :::   | ,;'
+      '._______.'`
+'''
+
+# Printing the ASCII art
+print(ascii_art)
+sleep(1)
+print("You received a call")
+sleep(1)
+print("The mysterious voice speaks to you.")
+sleep(1)
+print("Are you ready?")
+file_name = "manifesto.tms"
+file_content = "THE CyberEks GROUP. JOIN US 68656C6C6F776F726C640A"
+with open(file_name, "w") as file:
+    file.write(file_content)
+
+print("manifesto.tms has been saved on your computer")

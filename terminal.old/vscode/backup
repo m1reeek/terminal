@@ -1,0 +1,265 @@
+import os
+import PySimpleGUI as sg
+import pyzipper
+
+class MSDOSTerminal:
+    def __init__(self):
+        self.initial_dir = os.getcwd()
+        self.current_dir = self.initial_dir
+        self.username = ""
+        self.hostname = ""
+        self.password = ""
+        self.logged_in = False
+        sg.theme('DarkBlack')
+        self.layout = [
+            [sg.Output(size=(80, 20), font=("Courier New", 10), key='-OUTPUT-', text_color='lime', background_color='black')],
+            [sg.Text("", size=(80, 1), font=("Courier New", 10), key='-PROMPT-', text_color='lime', background_color='black')],
+            [sg.Input(key='-INPUT-', font=("Courier New", 10)), sg.Button('Execute', key='-EXECUTE-', button_color=('black', 'lime'))],
+            [sg.Multiline(size=(80, 10), font=("Courier New", 10), key='-EDITOR-', background_color='black', text_color='lime')],
+            [sg.Button('Save', key='-SAVE-', button_color=('black', 'lime')), sg.Button('Save As', key='-SAVEAS-', button_color=('black', 'lime')), sg.Button('Clear Editor', key='-CLEAR-', button_color=('black', 'lime')), sg.Button('Open TMS File', key='-OPENTMS-', button_color=('black', 'lime'))]
+        ]
+        self.window = sg.Window("Terminal", self.layout, finalize=True)
+        self.current_command = ""
+    
+    def run(self):
+        print(" ________                                 __                      __  \n /        |                               /  |                    /  | \n $$$$$$$$/______    ______   _____  ____  $$/  _______    ______  $$ | \n    $$ | /      \  /      \ /     \/    \ /  |/       \  /      \ $$ | \n    $$ |/$$$$$$  |/$$$$$$  |$$$$$$ $$$$  |$$ |$$$$$$$  | $$$$$$  |$$ | \n    $$ |$$    $$ |$$ |  $$/ $$ | $$ | $$ |$$ |$$ |  $$ | /    $$ |$$ | \n    $$ |$$$$$$$$/ $$ |      $$ | $$ | $$ |$$ |$$ |  $$ |/$$$$$$$ |$$ | \n    $$ |$$       |$$ |      $$ | $$ | $$ |$$ |$$ |  $$ |$$    $$ |$$ | \n    $$/  $$$$$$$/ $$/       $$/  $$/  $$/ $$/ $$/   $$/  $$$$$$$/ $$/  \n                                                                      ")
+        if os.path.isfile("userdata.tms"):
+            self.load_user_data()
+            print(f"Welcome back, {self.username}!")
+            self.logged_in = True
+            print("Type 'cmd' to list commands.")
+            print()
+        else:
+            print("User Registration, Input Your Name:")
+        while True:
+            event, values = self.window.read()
+
+            if event == sg.WINDOW_CLOSED:
+                break
+
+            if not self.logged_in:
+                if event == '-EXECUTE-' or event == '-INPUT-' and values['-INPUT-'] != '':
+                    self.process_login(values['-INPUT-'])
+            else:
+                if event == '-EXECUTE-' or event == '-INPUT-' and values['-INPUT-'] != '':
+                    self.current_command = values['-INPUT-'].strip()
+                    self.process_command(self.current_command)
+                    self.window['-INPUT-'].update('')
+                    self.window['-EDITOR-'].update('')
+            
+            if event == '-SAVE-' and self.logged_in:
+                self.save_file()
+            elif event == '-SAVEAS-' and self.logged_in:
+                self.save_file_as()
+            elif event == '-CLEAR-':
+                self.clear_editor()
+            elif event == '-OPENTMS-' and self.logged_in:
+                self.open_tms_file()
+        
+        self.save_user_data()
+        self.window.close()
+
+    def process_login(self, input_value):
+        if self.username == "":
+            self.username = input_value
+            print("Input Your Hostname:")
+        elif self.hostname == "":
+            self.hostname = input_value
+            print("Input Your Password:")
+        elif self.password == "":
+            self.password = input_value
+            print("Registration Completed!")
+            self.logged_in = True
+            print(f"Welcome, {self.username}!")
+            print("Type 'cmd' to list commands.")
+            print()
+
+    def process_command(self, command):
+        if command == 'cmd':
+            self.show_commands()
+        elif command == 'exit':
+            self.exit_terminal()
+        elif command == 'pwd':
+            self.print_working_directory()
+        elif command == 'ls':
+            self.list_files()
+        elif command.startswith('cd '):
+            directory = command[3:]
+            self.change_directory(directory)
+        elif command.startswith('mkdir '):
+            directory = command[6:]
+            self.make_directory(directory)
+        elif command.startswith('cat '):
+            filename = command[4:]
+            self.print_file_content(filename)
+        elif command.startswith('rm '):
+            filename = command[3:]
+            self.remove_file(filename)
+        elif command.startswith('zip '):
+            filename = command[4:]
+            self.zip_file(filename)
+        elif command.startswith('unzip '):
+            filename = command[6:]
+            self.unzip_file(filename)
+        elif command == 'clear':
+            self.clear_output()
+        elif command == 'edit':
+            self.open_editor()
+        elif command == 'save':
+            self.save_editor_content()
+        elif command == 'open':
+            self.open_editor_file()
+        else:
+            print(f"Command '{command}' not recognized.")
+
+    def show_commands(self):
+        print("List of available commands:")
+        print("  cmd                List commands")
+        print("  exit               Exit the terminal")
+        print("  pwd                Print working directory")
+        print("  ls                 List files in current directory")
+        print("  cd [directory]     Change directory")
+        print("  mkdir [directory]  Create a new directory")
+        print("  cat [filename]     Display file content")
+        print("  rm [filename]      Remove a file")
+        print("  zip [filename]     Zip a file")
+        print("  unzip [filename]   Unzip a file")
+        print("  clear              Clear the terminal output")
+        print("  edit               Open the editor")
+        print("  save               Save editor content")
+        print("  open               Open a file in the editor")
+
+    def exit_terminal(self):
+        print("Goodbye!")
+        exit()
+
+    def print_working_directory(self):
+        print(self.current_dir)
+
+    def list_files(self):
+        files = os.listdir(self.current_dir)
+        for file in files:
+            print(file)
+
+    def change_directory(self, directory):
+        if directory == "..":
+            self.current_dir = os.path.dirname(self.current_dir)
+        else:
+            new_dir = os.path.join(self.current_dir, directory)
+            if os.path.isdir(new_dir):
+                self.current_dir = new_dir
+            else:
+                print(f"Directory '{new_dir}' does not exist.")
+
+    def make_directory(self, directory):
+        new_dir = os.path.join(self.current_dir, directory)
+        if not os.path.exists(new_dir):
+            os.makedirs(new_dir)
+        else:
+            print(f"Directory '{new_dir}' already exists.")
+
+    def print_file_content(self, filename):
+        file_path = os.path.join(self.current_dir, filename)
+        if os.path.isfile(file_path):
+            with open(file_path, 'r') as file:
+                content = file.read()
+                print(content)
+        else:
+            print(f"File '{file_path}' does not exist.")
+
+    def remove_file(self, filename):
+        file_path = os.path.join(self.current_dir, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
+        else:
+            print(f"File '{file_path}' does not exist.")
+
+    def zip_file(self, filename):
+        file_path = os.path.join(self.current_dir, filename)
+        if os.path.isfile(file_path):
+            with pyzipper.AESZipFile('compressed.zip', 'w', compression=pyzipper.ZIP_LZMA, encryption=pyzipper.WZ_AES) as zipf:
+                zipf.setpassword(self.password.encode())
+                zipf.write(file_path)
+                print(f"File '{file_path}' compressed successfully.")
+        else:
+            print(f"File '{file_path}' does not exist.")
+
+    def unzip_file(self, filename):
+        zip_path = os.path.join(self.current_dir, filename)
+        if os.path.isfile(zip_path):
+            with pyzipper.AESZipFile(zip_path, 'r') as zipf:
+                try:
+                    zipf.setpassword(self.password.encode())
+                    zipf.extractall(self.current_dir)
+                    print(f"File '{zip_path}' extracted successfully.")
+                except pyzipper.BadPassword:
+                    print("Incorrect password.")
+        else:
+            print(f"File '{zip_path}' does not exist.")
+
+    def clear_output(self):
+        self.window['-OUTPUT-'].update('')
+
+    def open_editor(self):
+        self.window['-EDITOR-'].update('')
+        self.window['-EDITOR-'].Widget.config(state='normal')
+        self.window['-EXECUTE-'].update(disabled=True)
+        self.window['-SAVE-'].update(disabled=False)
+        self.window['-SAVEAS-'].update(disabled=False)
+        self.window['-CLEAR-'].update(disabled=False)
+        self.window['-OPENTMS-'].update(disabled=True)
+
+    def save_editor_content(self):
+        content = self.window['-EDITOR-'].get()
+        self.window['-EXECUTE-'].update(disabled=False)
+        self.window['-SAVE-'].update(disabled=False)
+        self.window['-SAVEAS-'].update(disabled=False)
+        self.window['-CLEAR-'].update(disabled=False)
+        self.window['-OPENTMS-'].update(disabled=False)
+        self.window['-EDITOR-'].Widget.config(state='disabled')
+
+    def open_editor_file(self):
+        filename = sg.popup_get_file("Select a file to open", default_path=self.current_dir, file_types=(("Text Files", "*.txt"),))
+        if filename:
+            with open(filename, 'r') as file:
+                content = file.read()
+                self.window['-EDITOR-'].update(content)
+
+    def save_file(self):
+        filename = "userdata.tms"
+        data = f"{self.username}\n{self.hostname}\n{self.password}"
+        with open(filename, 'w') as file:
+            file.write(data)
+        print("User data saved successfully.")
+
+    def save_file_as(self):
+        filename = sg.popup_get_file("Save As", default_path=self.current_dir, save_as=True, file_types=(("TMS Files", "*.tms"),))
+        if filename:
+            self.save_file()
+            os.rename("userdata.tms", filename)
+            print("User data saved successfully.")
+
+    def load_user_data(self):
+        with open("userdata.tms", 'r') as file:
+            data = file.read().splitlines()
+            self.username = data[0]
+            self.hostname = data[1]
+            self.password = data[2]
+
+    def save_user_data(self):
+        data = f"{self.username}\n{self.hostname}\n{self.password}"
+        with open("userdata.tms", 'w') as file:
+            file.write(data)
+
+    def clear_editor(self):
+        self.window['-EDITOR-'].update('')
+
+    def open_tms_file(self):
+        filename = sg.popup_get_file("Select a TMS file to open", default_path=self.current_dir, file_types=(("TMS Files", "*.tms"),))
+        if filename:
+            with open(filename, 'r') as file:
+                content = file.read()
+                self.window['-EDITOR-'].update(content)
+
+terminal = MSDOSTerminal()
+terminal.run()

@@ -1,0 +1,19 @@
+def hex_to_text(hex_string):
+    hex_string = hex_string.strip().replace(" ", "")
+    try:
+        text = bytearray.fromhex(hex_string).decode()
+        return text
+    except ValueError:
+        return "Invalid hex string"
+
+file_name = "hexinput.tms"
+
+try:
+    with open(file_name, 'r') as file:
+        hex_input = file.read()
+
+    output = hex_to_text(hex_input)
+    print(output + "\n This is your output, feel free to save it as it may be important.")
+
+except FileNotFoundError:
+    print("Welcome to the hex to text converter! For this program to read your input it must be in a hexinput.tms file. Have fun!")

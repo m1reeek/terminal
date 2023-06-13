@@ -1,0 +1,31 @@
+import time
+
+def search(query):
+    # Custom search results
+    search_results = {
+        "RetroNet": "RetroNet Tool Suite - A powerful tool suite. Code: RetroNetTool",
+    }
+
+    # Check if any query key partially matches the search query
+    for key in search_results:
+        if query.lower() in key.lower():
+            return search_results[key]
+
+    return f"No results found for: {query}"
+
+def browse():
+    queries = []
+    while True:
+        query = input("Enter a search query (or 'q' to quit): ")
+        if query.lower() == "q":
+            break
+        queries.append(query)
+
+    for query in queries:
+        result = search(query)
+        print(result)
+        print("-" * 50)
+        time.sleep(1)  # Simulating delay between queries
+
+if __name__ == "__main__":
+    browse()

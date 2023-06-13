@@ -1,0 +1,15 @@
+// AVAILABLE MAILS, LINE 2 AND 3
+master@CyberX.com
+Greetings, esteemed user, and welcome to CyberX. As an organization, we are driven by a set of objectives that will be revealed to you in due time. Rest assured, their significance will become abundantly clear. Your current mission entails extracting vital information from one of our adversaries. The target computer's username is john@helloword.tk. Fortunately, we have obtained the password for this account; however, it has been encrypted. The decrypted password is "DontForgetThisPassword". Your task is to retrieve a password for the "HelloWord" service and store this password securely in a file named "john@password.tms" within this folder. Please note that this email address will be deleted once we provide you with a new one.
+// NOT AVAILABLE YET MAILS, STARTS AT LINE 10
+
+
+
+
+
+// 11 SENDER, 12 MESSAGE
+master@CyberX.com
+Congratulations, esteemed user. Your exceptional abilities have not gone unnoticed, and we are reaching out to you once again, seeking your invaluable assistance. It has come to our attention that the system you previously infiltrated has undergone significant updates, making it inaccessible to you. This marks the end of the era of straightforward missions. Going forward, stringent security measures have been implemented, making it exceedingly challenging to breach their defenses. Regrettably, this will be the final occasion on which we share a password for computer access with you. The designated email for this operation is walter@helloword.tk. We apologize for the inconvenience, but the password has been encrypted. The encrypted password is 424c55455354554646. Your task is once again the same, retrieve the password for the "HelloWord" service and store it in a file named walter@password.tms
+// END OF MAIL
+// 15 SENDER, 16 MESSAGE
+master@CyberX.com

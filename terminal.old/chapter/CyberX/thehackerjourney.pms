@@ -1,0 +1,37 @@
+def password_prompt():
+    ascii_logo = """
+                                                                                                                           
+                                             bbbbbbbb\n                                                                      
+        CCCCCCCCCCCCC                        b::::::b\n                                                 XXXXXXX       XXXXXXX
+     CCC::::::::::::C                        b::::::b\n                                                 X:::::X       X:::::X
+   CC:::::::::::::::C                        b::::::b\n                                                 X:::::X       X:::::X
+  C:::::CCCCCCCC::::C                         b:::::b\n                                                 X::::::X     X::::::X
+ C:::::C       CCCCCCyyyyyyy           yyyyyyyb:::::bbbbbbbbb        eeeeeeeeeeee    rrrrr   rrrrrrrrrXXX:::::X   X:::::XXX
+C:::::C               y:::::y         y:::::y b::::::::::::::bb    ee::::::::::::ee  r::::rrr:::::::::r  X:::::X X:::::X   
+C:::::C                y:::::y       y:::::y  b::::::::::::::::b  e::::::eeeee:::::eer:::::::::::::::::r  X:::::X:::::X    
+C:::::C                 y:::::y     y:::::y   b:::::bbbbb:::::::be::::::e     e:::::err::::::rrrrr::::::r  X:::::::::X     
+C:::::C                  y:::::y   y:::::y    b:::::b    b::::::be:::::::eeeee::::::e r:::::r     r:::::r  X:::::::::X     
+C:::::C                   y:::::y y:::::y     b:::::b     b:::::be:::::::::::::::::e  r:::::r     rrrrrrr X:::::X:::::X    
+C:::::C                    y:::::y:::::y      b:::::b     b:::::be::::::eeeeeeeeeee   r:::::r            X:::::X X:::::X   
+ C:::::C       CCCCCC       y:::::::::y       b:::::b     b:::::be:::::::e            r:::::r         XXX:::::X   X:::::XXX
+  C:::::CCCCCCCC::::C        y:::::::y        b:::::bbbbbb::::::be::::::::e           r:::::r         X::::::X     X::::::X
+   CC:::::::::::::::C         y:::::y         b::::::::::::::::b  e::::::::eeeeeeee   r:::::r         X:::::X       X:::::X
+     CCC::::::::::::C        y:::::y          b:::::::::::::::b    ee:::::::::::::e   r:::::r         X:::::X       X:::::X
+        CCCCCCCCCCCCC       y:::::y           bbbbbbbbbbbbbbbb       eeeeeeeeeeeeee   rrrrrrr         XXXXXXX       XXXXXXX
+                           y:::::y                                                                                         
+                          y:::::y                                                                                          
+                         y:::::y                                                                                           
+                        y:::::y                                                                                            
+                       yyyyyyy                                                                                             
+"""
+    print(ascii_logo)
+    password = input("Enter the password: ")
+
+    # Check if the password is correct
+    if password == "mypassword":
+        print("Access granted!")
+    else:
+        print("Access denied!")
+
+# Call the function to prompt for a password
+password_prompt()

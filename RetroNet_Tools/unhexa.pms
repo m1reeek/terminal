@@ -1,0 +1,18 @@
+def text_to_hex(text):
+    try:
+        hex_string = text.encode().hex()
+        return hex_string
+    except UnicodeEncodeError:
+        return "Unable to encode the text"
+
+file_name = "textinput.tms"
+
+try:
+    with open(file_name, 'r') as file:
+        text_input = file.read()
+
+    output = text_to_hex(text_input)
+    print(output + " \n This is your output, feel free to save it as it may be important.")
+
+except FileNotFoundError:
+    print("Welcome to the text to hex converter! For this program to read your input it must be in a textinput.tms file. Have fun!")
